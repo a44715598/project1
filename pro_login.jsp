@@ -43,8 +43,6 @@
           <div class="col-sm-offset-2 col-sm-10">
             <button type="submit"  class="btn btn-primary">Sign in</button>
             <button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bs-example-modal-sm">Sign up</button>
-
-
           </div>
         </div>
       </form>

@@ -7,6 +7,7 @@
 --%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
          pageEncoding="UTF-8"%>
+<%@ page import="Jonathan.SQLConnection" %>
 <%@ page import="java.io.*,java.util.*,java.sql.*"%>
 <%@ page import="javax.servlet.http.*,javax.servlet.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
@@ -24,14 +25,39 @@
 <body>
 <% String comment=request.getParameter("comment");
     String id=request.getParameter("id");
-    Integer proposalid=Integer.valueOf(id).intValue();%>
+    Integer proposalid = Integer.valueOf(id).intValue();
+    String [] advice = request.getParameterValues("optionsRadios");
+    SQLConnection con = new SQLConnection();
+    con.connectToDatabase(
+            "localhost:3306",
+            "dbgirl",
+            "root",
+            "111" );
+    Integer userid = con.getLoginId((String)session.getAttribute("user_now"));
+    %>
 <sql:setDataSource var="snapshot" driver="com.mysql.jdbc.Driver"
                    url="jdbc:mysql://localhost:3306/dbgirl?useUnicode=true&characterEncoding=utf-8"
                    user="root" password="111"/>
+<%if(comment!=null){%>
+<sql:update dataSource="${snapshot}" var="result">
+    insert into comments (FileId,WriterId,Content) values(<%=proposalid%>,<%=userid%>,'<%=comment%>')
+    <%if(advice[0].equals("1")){%>
+        <sql:update dataSource="${snapshot}" var="result4">
+            update proposal set Agree = Agree+1 where FileId = <%=proposalid%>
+        </sql:update>
+    <%}else{%>
+        <sql:update dataSource="${snapshot}" var="result5">
+            update proposal set Disagree = Disagree+1 where FileId = <%=proposalid%>
+        </sql:update>
+    <%}%>
+</sql:update>
+<%}%>
+
 <sql:query var="result" dataSource="${snapshot}">
     select *from proposal where FileId = <%=proposalid%>;
     <%--<%Integer.valueOf(proposalid).intValue();%>--%>
 </sql:query>
+
 <sql:query var="result2" dataSource="${snapshot}">
     select *from comments where FileId = <%=proposalid%>;
     <%--<%Integer.valueOf(proposalid).intValue();%>--%>
@@ -43,21 +69,21 @@
 <div class="jumbotron">
     <div class="container">
         <div class="row">
-            <div class="col-md-11">
+            <div class="col-md-8">
                 <h2>BJUT</h2>
                 <p>能力示范文稿管理系统</p>
             </div>
-            <div class="col-md-1">
-                <div class="dropdown">
-                    <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                        写者
-                        <span class="caret"></span>
-                    </button>
-                    <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                        <li><a href="#">写者</a></li>
-                        <li><a href="#">管理员</a></li>
-                    </ul>
-                </div>
+            <div class="col-md-4">
+                <c:forEach var="row" items="${result3.rows}">
+                    <c:if test="${row.Feature==2}">
+                        <h4>欢迎您！管理员：<c:out value="${row.Name}"/></h4>
+                    </c:if>
+                </c:forEach>
+                <c:forEach var="row" items="${result3.rows}">
+                    <c:if test="${row.Feature==1}">
+                        <h4>欢迎您！写者：<c:out value="${row.Name}"/></h4>
+                    </c:if>
+                </c:forEach>
             </div>
         </div>
     </div>
@@ -77,7 +103,7 @@
                 <c:forEach var="row" items="${result3.rows}">
                     <c:if test="${row.Feature==2}">
                         <a href="personmanage.jsp" class="list-group-item">申请管理</a>
-                        <a href="" class="list-group-item">提案管理</a>
+                        <a href="proposalmanage.jsp" class="list-group-item">提案管理</a>
                         <a href="" class="list-group-item">规范管理</a>
                     </c:if>
                 </c:forEach>
@@ -97,7 +123,6 @@
                         <p style="margin-bottom: 100px;font-size: medium;"><c:out value="${row.Content}"></c:out></p>
                         </c:forEach>
                         <!--<textarea class="form-control" rows="6" >你的想法</textarea>-->
-
                         <!--<p style="padding-top: 10px;display: inline-block;"><a class="btn btn-primary btn-lg" href="#" role="button">附议</a></p>-->
                         <!--<p style="display: inline-block;"><a class="btn btn-primary btn-lg" href="#" role="button">反对</a></p>-->
                         <form class="form-horizontal" action="detail.jsp" method="get">
@@ -107,16 +132,18 @@
                             <input value="<%=proposalid%>" name="id" hidden>
                             <div class="form-group">
                                 <div class="col-sm-2">
-                                    <div class="checkbox">
+                                    <div class="radio">
                                         <label>
-                                            <input name="advice" value="1" type="radio">附议
+                                            <input type="radio" name="optionsRadios" id="yes" value="1" checked>
+                                            附议
                                         </label>
                                     </div>
                                 </div>
                                 <div class="col-sm-2">
-                                    <div class="checkbox">
+                                    <div class="radio">
                                         <label>
-                                            <input name="advice" value="2" type="radio">反对
+                                            <input type="radio" name="optionsRadios" id="no" value="0">
+                                            反对
                                         </label>
                                     </div>
                                 </div>
@@ -137,12 +164,11 @@
                             <tbody>
                             <c:forEach var="row" items="${result2.rows}">
                             <tr>
-                                <th><c:out value="${row.WriterId}"/> </th>
+                                <th><%=session.getAttribute("user_now")%> </th>
                                 <td><c:out value="${row.Content}"></c:out></td>
                                 <td><c:out value="${row.Timestamp}"></c:out></td>
                             </tr>
                             </c:forEach>
-                            <tr><td><%=comment%></td></tr>
                             </tbody></table>
                     </div>
                 </div>
@@ -158,7 +184,6 @@
         <span>  @2017 BJUT</span>
     </div>
 </div>
-
 <!-- jQuery 文件 -->
 <script src="./static/jquery/jquery.min.js"></script>
 <!-- Bootstrap JavaScript 文件 -->

@@ -2,6 +2,7 @@
          pageEncoding="UTF-8"%>
 <%@ page import="java.io.*,java.util.*,java.sql.*"%>
 <%@ page import="javax.servlet.http.*,javax.servlet.*" %>
+<%@ page import="Jonathan.SQLConnection" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/sql" prefix="sql"%>
 <!DOCTYPE html>
@@ -15,6 +16,11 @@
     <link rel="stylesheet" href="./static/bootstrap/css/bootstrap.min.css">
 </head>
 <body>
+<%--<%--%>
+    <%--String--%>
+    <%--check=request.getParameter("check");--%>
+    <%--Integer check1=Integer.valueOf(check).intValue();--%>
+    <%--%>--%>
 <sql:setDataSource var="snapshot" driver="com.mysql.jdbc.Driver"
                    url="jdbc:mysql://localhost:3306/dbgirl?useUnicode=true&characterEncoding=utf-8"
                    user="root" password="111"/>
@@ -28,21 +34,21 @@
 <div class="jumbotron">
     <div class="container">
         <div class="row">
-            <div class="col-md-11">
+            <div class="col-md-8">
                 <h2>BJUT</h2>
                 <p>能力示范文稿管理系统</p>
             </div>
-            <div class="col-md-1">
-                <div class="dropdown">
-                    <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                        写者
-                        <span class="caret"></span>
-                    </button>
-                    <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                        <li><a href="#">写者</a></li>
-                        <li><a href="#">管理员</a></li>
-                    </ul>
-                </div>
+            <div class="col-md-4">
+                <c:forEach var="row" items="${result2.rows}">
+                    <c:if test="${row.Feature==2}">
+                        <h4>欢迎您！管理员：<c:out value="${row.Name}"/></h4>
+                    </c:if>
+                </c:forEach>
+                <c:forEach var="row" items="${result2.rows}">
+                    <c:if test="${row.Feature==1}">
+                        <h4>欢迎您！写者：<c:out value="${row.Name}"/></h4>
+                    </c:if>
+                </c:forEach>
             </div>
         </div>
     </div>
@@ -62,7 +68,7 @@
                 <c:forEach var="row" items="${result2.rows}">
                     <c:if test="${row.Feature==2}">
                         <a href="personmanage.jsp" class="list-group-item">申请管理</a>
-                        <a href="" class="list-group-item">提案管理</a>
+                        <a href="proposalmanage.jsp" class="list-group-item">提案管理</a>
                         <a href="" class="list-group-item">规范管理</a>
                     </c:if>
                 </c:forEach>
@@ -99,11 +105,6 @@
                                 <button type="submit" class="btn btn-primary">提交</button>
                             </div>
                         </div>
-                        <!--<div class="form-group">-->
-                        <!--<div class="col-sm-offset-1 col-sm-10">-->
-                        <!--<button type="submit" class="btn btn-primary">提交</button>-->
-                        <!--</div>-->
-                        <!--</div>-->
                     </form>
                 </div>
             </div>
@@ -114,16 +115,6 @@
         <div class="col-md-3"></div>
         <!-- 右侧内容区域 -->
         <div class="col-md-9">
-
-            <!-- 所有的错误提示 -->
-            <!--<div class="alert alert-danger">-->
-            <!--<ul>-->
-            <!--<li>姓名不能为空</li>-->
-            <!--<li>年龄只能为整数</li>-->
-            <!--<li>请选择性别</li>-->
-            <!--</ul>-->
-            <!--</div>-->
-
             <!-- 自定义内容区域 -->
             <div class="panel panel-default">
                 <div class="panel-heading">
@@ -155,7 +146,7 @@
                                     <td><c:out value="${row.Disagree}"/></td>
                                     <td>
                                         <a href="detail.jsp?id=${row.FileId}">详情</a>
-                                        <a href = "delete.jsp?id=${row.FileId}">撤销</a>
+                                        <a href = "delete2.jsp?id=${row.FileId}">撤销</a>
                                         <!--<a href="">修改</a>-->
                                         <!--<a href="">删除</a>-->
                                     </td>
@@ -178,7 +169,9 @@
         <span>  @2017 BJUT</span>
     </div>
 </div>
-
+<%--<%if(check1==1){%>--%>
+<%--<script>alert("您的提案已达上限,请删除部分提案再提交！");</script>--%>
+<%--<%}%>--%>
 <!-- jQuery 文件 -->
 <script src="./static/jquery/jquery.min.js"></script>
 <!-- Bootstrap JavaScript 文件 -->

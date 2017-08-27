@@ -30,21 +30,21 @@
 <div class="jumbotron">
     <div class="container">
         <div class="row">
-            <div class="col-md-11">
+            <div class="col-md-8">
                 <h2>BJUT</h2>
                 <p>能力示范文稿管理系统</p>
             </div>
-            <div class="col-md-1">
-                <div class="dropdown">
-                    <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                        写者
-                        <span class="caret"></span>
-                    </button>
-                    <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                        <li><a href="#">写者</a></li>
-                        <li><a href="#">管理员</a></li>
-                    </ul>
-                </div>
+            <div class="col-md-4">
+                <c:forEach var="row" items="${result2.rows}">
+                    <c:if test="${row.Feature==2}">
+                        <h4>欢迎您！管理员：<c:out value="${row.Name}"/></h4>
+                    </c:if>
+                </c:forEach>
+                <c:forEach var="row" items="${result2.rows}">
+                    <c:if test="${row.Feature==1}">
+                        <h4>欢迎您！写者：<c:out value="${row.Name}"/></h4>
+                    </c:if>
+                </c:forEach>
             </div>
         </div>
     </div>
@@ -64,7 +64,7 @@
                 <c:forEach var="row" items="${result2.rows}">
                     <c:if test="${row.Feature==2}">
                         <a href="personmanage.jsp" class="list-group-item">申请管理</a>
-                        <a href="" class="list-group-item">提案管理</a>
+                        <a href="proposalmanage.jsp" class="list-group-item">提案管理</a>
                         <a href="" class="list-group-item">规范管理</a>
                     </c:if>
                 </c:forEach>

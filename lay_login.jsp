@@ -1,11 +1,5 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: XPS 13 9350
-  Date: 2017/8/25
-  Time: 13:40
-  To change this template use File | Settings | File Templates.
---%>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+
+<%--<%@ page contentType="text/html;charset=UTF-8" language="java" %>--%>
 <%@ page import="Jonathan.SQLConnection"%>
 <%@ page import="Jonathan.Comment"%>
 <%@ page import="Jonathan.FileBasic"%>
@@ -13,8 +7,8 @@
 <%@ page import="Jonathan.Standard"%>
 <%@ page import="Jonathan.User"%>
 <%
-  String user = new String(request.getParameter("username")); //user 这是用户名
-  String pwd = new String(request.getParameter("password")); //pwd 这是密码
+  String user = new String(request.getParameter("username"));
+  String pwd = new String(request.getParameter("password"));
 
  	SQLConnection con = new SQLConnection();
 	con.connectToDatabase(

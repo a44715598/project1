@@ -2,6 +2,7 @@
          pageEncoding="UTF-8"%>
 <%@ page import="java.io.*,java.util.*,java.sql.*"%>
 <%@ page import="javax.servlet.http.*,javax.servlet.*" %>
+<%@ page import="Jonathan.SQLConnection" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/sql" prefix="sql"%>
 
@@ -18,12 +19,30 @@
 <body>
     <% String title=request.getParameter("Title");
   String Content=request.getParameter("Content");
+        SQLConnection con = new SQLConnection();
+        con.connectToDatabase(
+                "localhost:3306",
+                "dbgirl",
+                "root",
+                "111" );
+        Integer userid = con.getLoginId((String)session.getAttribute("user_now"));
+        Integer num = con.getProposalAmountByUId(userid);
 %>
+    <script>console.log(<%=num%>);</script>
 <sql:setDataSource var="snapshot" driver="com.mysql.jdbc.Driver"
                      url="jdbc:mysql://localhost:3306/dbgirl?useUnicode=true&characterEncoding=utf-8"
                      user="root" password="111"/>
+    <%if (num<3){%>
 <sql:update dataSource="${snapshot}" var="result2">
-INSERT INTO proposal(Title,Content,IsPro) VALUES ('<%=title%>','<%=Content%>','0');
+INSERT INTO proposal(Title,Content,WriterId,Status,Agree,Disagree,IsPro) VALUES ('<%=title%>','<%=Content%>','<%=userid%>','1',0,0,'T');
 </sql:update>
 <%pageContext.forward("index.jsp");%>
+<%}else{%>
+    <script>alert("您的提案已达上限,请删除部分提案再提交！");
+    window.location.href="form.jsp"</script>
+<%}%>
+    <script src="./static/jquery/jquery.min.js"></script>
+    <!-- Bootstrap JavaScript 文件 -->
+    <script src="./static/bootstrap/js/bootstrap.min.js"></script>
 </body>
+</html>
