@@ -15,11 +15,13 @@
     <link rel="stylesheet" href="./static/bootstrap/css/bootstrap.min.css">
 </head>
 <body>
+<%  String id=request.getParameter("id");
+    Integer userid=Integer.valueOf(id).intValue();%>
 <sql:setDataSource var="snapshot" driver="com.mysql.jdbc.Driver"
                    url="jdbc:mysql://localhost:3306/dbgirl?useUnicode=true&characterEncoding=utf-8"
                    user="root" password="111"/>
 <sql:query var="result" dataSource="${snapshot}">
-    select *from proposal where WriterId = (select UserId from logininfo where UName=<%=session.getAttribute("user_now")%>)
+    select *from userinfo where UserId = <%=userid%>
 </sql:query>
 <sql:query var="result2" dataSource="${snapshot}">
     select *from userinfo where UserId = (select UserId from logininfo where UName=<%=session.getAttribute("user_now")%>)
@@ -90,42 +92,59 @@
 
             <!-- 自定义内容区域 -->
             <div class="panel panel-default">
-                <div class="panel-heading">我的提案</div>
+                <div class="panel-heading">提案信息</div>
                 <div class="table-responsive">
                     <table class="table table-striped table-hover">
-                        <thead>
-                        <tr>
-                            <th>编号</th>
-                            <th>提案名称</th>
-                            <th>作者</th>
-                            <th>截止日期</th>
-                            <th>状态</th>
-                            <th>附议数</th>
-                            <th>反对数</th>
-                            <th width="120">操作</th>
-                        </tr>
-                        </thead>
                         <tbody>
-                            <c:forEach var="row" items="${result.rows}">
-                                <tr>
-                                <th><c:out value="${row.FileId}"/> </th>
-                                <td><c:out value="${row.Title}"/></td>
-                                <td><c:out value="${row.WriterId}"/></td>
-                                <td><c:out value="${row.UploadDate}"/></td>
-                                <td><c:out value="${row.Status}"/></td>
-                                <td><c:out value="${row.Agree}"/></td>
-                                <td><c:out value="${row.Disagree}"/></td>
-                                <td>
-                                <a href="detail.jsp?id=${row.FileId}">详情</a>
-                                    <a href = "delete.jsp?id=${row.FileId}">撤销</a>
-                                <!--<a href="">修改</a>-->
-                                <!--<a href="">删除</a>-->
-                                </td>
-                                </tr>
-                            </c:forEach>
+                        <c:forEach var="row" items="${result.rows}">
+                            <tr>
+                                <th>用户ID：</th>
+                                <th><c:out value="${row.UserId}"/> </th>
+                            </tr>
+                            <tr>
+                                <th>姓名：</th>
+                                <td><c:out value="${row.Name}"/></td>
+                            </tr>
+                            <tr>
+                                <th>性别：</th>
+                                <td><c:out value="${row.Gender}"/></td>
+                            </tr>
+                            <tr>
+                                <th>生日：</th>
+                                <td><c:out value="${row.Birth}"/></td>
+                            </tr>
+                            <tr>
+                                <th>地址：</th>
+                                <td><c:out value="${row.Address}"/></td>
+                            </tr>
+                            <tr>
+                                <th>电话：</th>
+                                <td><c:out value="${row.Tel}"/></td>
+                            </tr>
+                            <tr>
+                                <th>推荐人：</th>
+                                <td><c:out value="${row.ReferrerId}"/></td>
+                            </tr>
+                            <tr>
+                                <th>行业分会：</th>
+                                <td><c:out value="${row.IndustryId}"/></td>
+                            </tr>
+                            <tr>
+                                <th>专委会：</th>
+                                <td><c:out value="${row.CommitteeId}"/></td>
+                            </tr>
+                            <tr>
+                                <th>身份：</th>
+                                <td><c:out value="${row.Feature}"/></td>
+                            </tr>
+                        </c:forEach>
                         </tbody>
                     </table>
                 </div>
+            </div>
+            <div class="btn-group">
+                <button onclick="window.location.href='agree.jsp'+'?id=<%=userid%>'" class="btn btn-primary">同意</button>
+                <button onclick="window.location.href='disagree.jsp'+'?id=<%=userid%>'" class="btn btn-warning">拒绝</button>
             </div>
 
             <!-- 分页  -->

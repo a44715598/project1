@@ -36,6 +36,9 @@
     select *from comments where FileId = <%=proposalid%>;
     <%--<%Integer.valueOf(proposalid).intValue();%>--%>
 </sql:query>
+<sql:query var="result3" dataSource="${snapshot}">
+    select *from userinfo where UserId = (select UserId from logininfo where UName=<%=session.getAttribute("user_now")%>)
+</sql:query>
 <!-- 头部 -->
 <div class="jumbotron">
     <div class="container">
@@ -70,7 +73,14 @@
                 <a href="index.jsp" class="list-group-item active">所有提案</a>
                 <a href="personal.jsp" class="list-group-item">个人提案</a>
                 <a href="form.jsp" class="list-group-item">提案编制</a>
-                <a href="personal.jsp" class="list-group-item">个人信息</a>
+                <a href="myinfo.jsp" class="list-group-item">个人信息</a>
+                <c:forEach var="row" items="${result3.rows}">
+                    <c:if test="${row.Feature==2}">
+                        <a href="personmanage.jsp" class="list-group-item">申请管理</a>
+                        <a href="" class="list-group-item">提案管理</a>
+                        <a href="" class="list-group-item">规范管理</a>
+                    </c:if>
+                </c:forEach>
             </div>
         </div>
 

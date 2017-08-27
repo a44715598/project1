@@ -25,7 +25,7 @@
 	
 	switch( con.chkLoginInfo( user, pwd ) ){
 	case SQLConnection.SUCCESS:
-		session.setAttribute("user_now",user);//user_ok为成功登陆的用户名
+		session.setAttribute("user_now",user);
 	    pageContext.forward("index.jsp");
 		break;
 	case SQLConnection.USER_INEXIST:

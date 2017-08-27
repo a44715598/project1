@@ -15,6 +15,15 @@
     <link rel="stylesheet" href="./static/bootstrap/css/bootstrap.min.css">
 </head>
 <body>
+<sql:setDataSource var="snapshot" driver="com.mysql.jdbc.Driver"
+                   url="jdbc:mysql://localhost:3306/dbgirl?useUnicode=true&characterEncoding=utf-8"
+                   user="root" password="111"/>
+<sql:query var="result" dataSource="${snapshot}">
+    select *from proposal where WriterId = (select UserId from logininfo where UName=<%=session.getAttribute("user_now")%>)
+</sql:query>
+<sql:query var="result2" dataSource="${snapshot}">
+    select *from userinfo where UserId = (select UserId from logininfo where UName=<%=session.getAttribute("user_now")%>)
+</sql:query>
 <!-- 头部 -->
 <div class="jumbotron">
     <div class="container">
@@ -49,7 +58,14 @@
                 <a href="index.jsp" class="list-group-item active">所有提案</a>
                 <a href="personal.jsp" class="list-group-item">个人提案</a>
                 <a href="form.jsp" class="list-group-item">提案编制</a>
-                <a href="personal.jsp" class="list-group-item">个人信息</a>
+                <a href="myinfo.jsp" class="list-group-item">个人信息</a>
+                <c:forEach var="row" items="${result2.rows}">
+                    <c:if test="${row.Feature==2}">
+                        <a href="personmanage.jsp" class="list-group-item">申请管理</a>
+                        <a href="" class="list-group-item">提案管理</a>
+                        <a href="" class="list-group-item">规范管理</a>
+                    </c:if>
+                </c:forEach>
             </div>
         </div>
 
@@ -128,51 +144,23 @@
                         </tr>
                         </thead>
                             <tbody>
-                            <tr>
-                                <th scope="row">001</th>
-                                <td>123</td>
-                                <td>123</td>
-                                <td>123</td>
-                                <td>123</td>
-                                <td>123</td>
-                                <td>123</td>
-                                <td>
-                                    <a href="">查看</a>
-                                    <a href="">打印</a>
-                                    <a href="">撤销</a>
-                                    <!--<a href="">删除</a>-->
-                                </td>
-                            </tr>
-                            <tr>
-                                <th scope="row">001</th>
-                                <td>123</td>
-                                <td>123</td>
-                                <td>123</td>
-                                <td>123</td>
-                                <td>123</td>
-                                <td>123</td>
-                                <td>
-                                    <a href="">查看</a>
-                                    <a href="">打印</a>
-                                    <a href="">撤销</a>
-                                    <!--<a href="">删除</a>-->
-                                </td>
-                            </tr>
-                            <tr>
-                                <th scope="row">001</th>
-                                <td>123</td>
-                                <td>123</td>
-                                <td>123</td>
-                                <td>123</td>
-                                <td>123</td>
-                                <td>123</td>
-                                <td>
-                                    <a href="">查看</a>
-                                    <a href="">打印</a>
-                                    <a href="">撤销</a>
-                                    <!--<a href="">删除</a>-->
-                                </td>
-                            </tr>
+                            <c:forEach var="row" items="${result.rows}">
+                                <tr>
+                                    <th><c:out value="${row.FileId}"/> </th>
+                                    <td><c:out value="${row.Title}"/></td>
+                                    <td><c:out value="${row.WriterId}"/></td>
+                                    <td><c:out value="${row.UploadDate}"/></td>
+                                    <td><c:out value="${row.Status}"/></td>
+                                    <td><c:out value="${row.Agree}"/></td>
+                                    <td><c:out value="${row.Disagree}"/></td>
+                                    <td>
+                                        <a href="detail.jsp?id=${row.FileId}">详情</a>
+                                        <a href = "delete.jsp?id=${row.FileId}">撤销</a>
+                                        <!--<a href="">修改</a>-->
+                                        <!--<a href="">删除</a>-->
+                                    </td>
+                                </tr>
+                            </c:forEach>
 
                             </tbody></table>
                     </div>

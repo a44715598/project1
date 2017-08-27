@@ -1,9 +1,17 @@
+<%--
+  Created by IntelliJ IDEA.
+  User: 陈星潼
+  Date: 2017/8/27
+  Time: 12:54
+  To change this template use File | Settings | File Templates.
+--%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
          pageEncoding="UTF-8"%>
 <%@ page import="java.io.*,java.util.*,java.sql.*"%>
 <%@ page import="javax.servlet.http.*,javax.servlet.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/sql" prefix="sql"%>
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -19,7 +27,7 @@
                    url="jdbc:mysql://localhost:3306/dbgirl?useUnicode=true&characterEncoding=utf-8"
                    user="root" password="111"/>
 <sql:query var="result" dataSource="${snapshot}">
-    select *from proposal where WriterId = (select UserId from logininfo where UName=<%=session.getAttribute("user_now")%>)
+    select *from proposal where FileId = 1;
 </sql:query>
 <sql:query var="result2" dataSource="${snapshot}">
     select *from userinfo where UserId = (select UserId from logininfo where UName=<%=session.getAttribute("user_now")%>)
@@ -56,7 +64,7 @@
         <div class="col-md-3">
             <div class="list-group">
                 <a href="index.jsp" class="list-group-item active">所有提案</a>
-                <a href="personal.jsp" class="list-group-item">个人提案</a>
+                <a href="personal.jsp" class="list-group-item">我的提案</a>
                 <a href="form.jsp" class="list-group-item">提案编制</a>
                 <a href="myinfo.jsp" class="list-group-item">个人信息</a>
                 <c:forEach var="row" items="${result2.rows}">
@@ -66,7 +74,9 @@
                         <a href="" class="list-group-item">规范管理</a>
                     </c:if>
                 </c:forEach>
+
             </div>
+
         </div>
 
         <!-- 右侧内容区域 -->
@@ -90,7 +100,7 @@
 
             <!-- 自定义内容区域 -->
             <div class="panel panel-default">
-                <div class="panel-heading">我的提案</div>
+                <div class="panel-heading">当前所有提案</div>
                 <div class="table-responsive">
                     <table class="table table-striped table-hover">
                         <thead>
@@ -106,8 +116,8 @@
                         </tr>
                         </thead>
                         <tbody>
-                            <c:forEach var="row" items="${result.rows}">
-                                <tr>
+                        <c:forEach var="row" items="${result.rows}">
+                            <tr>
                                 <th><c:out value="${row.FileId}"/> </th>
                                 <td><c:out value="${row.Title}"/></td>
                                 <td><c:out value="${row.WriterId}"/></td>
@@ -116,13 +126,15 @@
                                 <td><c:out value="${row.Agree}"/></td>
                                 <td><c:out value="${row.Disagree}"/></td>
                                 <td>
-                                <a href="detail.jsp?id=${row.FileId}">详情</a>
-                                    <a href = "delete.jsp?id=${row.FileId}">撤销</a>
-                                <!--<a href="">修改</a>-->
-                                <!--<a href="">删除</a>-->
+                                    <a href="detail.jsp?id=${row.FileId}">详情</a>
+                                    <a href="recommend.jsp?id=${row.FileId}">推荐</a>
+                                    <!--<a href="">修改</a>-->
+                                    <!--<a href="">删除</a>-->
                                 </td>
-                                </tr>
-                            </c:forEach>
+                            </tr>
+
+                        </c:forEach>
+                        </tr>
                         </tbody>
                     </table>
                 </div>
