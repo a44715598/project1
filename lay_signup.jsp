@@ -43,7 +43,7 @@
 %>
 <script type="text/javascript" language="javascript">
   		alert("注册成功！您的账号正在审核，请耐心等待...");
-  		window.document.location.href="layout-verify.html";
+  		window.document.location.href="pro_verify.jsp";
 </script>
 <%
 		break;

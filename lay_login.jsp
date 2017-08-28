@@ -6,6 +6,7 @@
 <%@ page import="Jonathan.Proposal"%>
 <%@ page import="Jonathan.Standard"%>
 <%@ page import="Jonathan.User"%>
+<%@ page import="java.util.*" %>
 <%
   String user = new String(request.getParameter("username"));
   String pwd = new String(request.getParameter("password"));
@@ -19,7 +20,20 @@
 	
 	switch( con.chkLoginInfo( user, pwd ) ){
 	case SQLConnection.SUCCESS:
-		session.setAttribute("user_now",user);
+
+
+	List olUserList = (List)application.getAttribute("olUserList");
+	if(olUserList == null)
+	{
+		olUserList = new ArrayList();
+	}
+	//把username添加进去
+	olUserList.add(user);
+//重新赋值回去
+	application.setAttribute("olUserList", olUserList);
+//当前用户的session
+	session.setAttribute("user_now", user);
+//重定向到result.jsp
 	    pageContext.forward("index.jsp");
 		break;
 	case SQLConnection.USER_INEXIST:

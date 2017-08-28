@@ -36,12 +36,14 @@
       <div class="col-md-4">
         <c:forEach var="row" items="${result2.rows}">
           <c:if test="${row.Feature==2}">
-            <h4>欢迎您！管理员：<c:out value="${row.Name}"/></h4>
+            <h2 style="display: inline">欢迎您！管理员：<c:out value="${row.Name}"/></h2>
+            <button class="btn btn-warning" onclick="window.location.href='lay_loginout.jsp';">注销</button>
           </c:if>
         </c:forEach>
         <c:forEach var="row" items="${result2.rows}">
           <c:if test="${row.Feature==1}">
-            <h4>欢迎您！写者：<c:out value="${row.Name}"/></h4>
+            <h2 style="display: inline">欢迎您！写者：<c:out value="${row.Name}"/></h2>
+            <button class="btn btn-warning" onclick="window.location.href='lay_loginout.jsp';">注销</button>
           </c:if>
         </c:forEach>
       </div>

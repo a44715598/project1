@@ -32,7 +32,7 @@ public class SQLConnection {
 	public static final int DB_OPER_FAILURE 	= 1;
 	public static final int TITLE_EXIST 		= 2;
 	public static final int TITLE_INEXIST		= 3;
-	public static final int USER_EXIST 			= 4;
+	public static final int USER_EXIST 		= 4;
 	public static final int USER_INEXIST		= 5;
 	public static final int REFERRER_EXIST		= 6;
 	public static final int REFERRER_INEXIST	= 7;
@@ -501,7 +501,6 @@ public class SQLConnection {
 					rs.getInt( "ReferrerId" ),
 					rs.getInt( "IndustryId" ),
 					rs.getInt( "CommitteeId" ),
-					rs.getInt( "SeminarId" ),
 					rs.getString( "Feature" ).charAt(0) ) );
 		}
 		rs.close();
@@ -524,62 +523,11 @@ public class SQLConnection {
 					rs.getInt( "ReferrerId" ),
 					rs.getInt( "IndustryId" ),
 					rs.getInt( "CommitteeId" ),
-					rs.getInt( "SeminarId" ),
 					rs.getString( "Feature" ).charAt(0));
 		}
 		return null;
 	}
 
-	/* 添加一个用户的个人信息，返回值
-	 * SQLConnection.USER_EXIST			同名（实名）用户已存在
-	 * SQLConnection.REFERRER_NO_FOUND	推荐人不存在
-	 * SQLConnection.DB_OPER_FAILURE	日期格式错误
-	 * SQLConnection.DB_OPER_FAILURE	数据库操作失败
-	 * SQLConnection.SUCCESS			成功
-	 * */
-	public int addUser( int uId, String name, String gender, String bDate, String address, String tel, String referrer, String industry, String committee ) throws SQLException{
-		User user = chkUserByName( name );
-		User refer = null;
-		if( user != null )
-			return SQLConnection.USER_EXIST;
-
-		if( referrer != "" ){
-			refer = chkUserByName( referrer );
-			if( refer == null )
-				return SQLConnection.REFERRER_INEXIST;
-		}
-
-		Calendar birth = null;
-		try {
-			birth = createCalendarByString(bDate);
-		} catch (ParseException e) {
-			return SQLConnection.DATE_FORMAT_ERROR;
-		}
-
-		pst = con.prepareStatement( "insert into UserInfo " +
-				"( UserId, Name, Gender, Birth, Address, Tel, ReferrerId, CommitteeId, IndustryId, Feature ) " +
-				"values ( ?,?,?,?,?,?,?,?,?,? )" );
-		pst.setInt( 1,  uId );
-		pst.setString( 2, name );
-		pst.setString( 3, gender );
-		pst.setDate( 4, new java.sql.Date( birth.getTime().getTime() ) );
-		pst.setString( 5,  address );
-		pst.setString( 6, tel );
-		pst.setInt( 7, ( refer == null ? -1 : refer.getId() ) );
-		pst.setInt( 8, Integer.valueOf( committee ) );
-		pst.setInt( 9, Integer.valueOf( industry ) );
-		pst.setString(10, String.valueOf( User.FEATURE_NORMAL ) );
-		pst.executeUpdate();
-
-		pst = con.prepareStatement( "insert into EnrollRequest ( UserId, CommitteeId, IndustryId, SeminarId ) values ( ?,?,?,? )" );
-		pst.setInt( 1, uId );
-		pst.setInt( 2, Integer.valueOf(committee));
-		pst.setInt( 3, Integer.valueOf(industry) );
-		pst.setInt( 4, Integer.valueOf( -1 ) );
-		pst.executeUpdate();
-
-		return SQLConnection.SUCCESS;
-	}
 
 	//查询ID为uId的用户的个人信息
 	public User chkUserById( int uId ) throws SQLException{
@@ -597,7 +545,6 @@ public class SQLConnection {
 					rs.getInt( "ReferrerId" ),
 					rs.getInt( "IndustryId" ),
 					rs.getInt( "CommitteeId" ),
-					rs.getInt( "SeminarId" ),
 					rs.getString( "Feature" ).charAt(0));
 		}
 		rs.close();
@@ -671,7 +618,56 @@ public class SQLConnection {
 
 		return SQLConnection.SUCCESS;
 	}
+	/* 添加一个用户的个人信息，返回值
+ * SQLConnection.USER_EXIST			同名（实名）用户已存在
+ * SQLConnection.REFERRER_NO_FOUND	推荐人不存在
+ * SQLConnection.DB_OPER_FAILURE	日期格式错误
+ * SQLConnection.DB_OPER_FAILURE	数据库操作失败
+ * SQLConnection.SUCCESS			成功
+ * */
+	public int addUser( int uId, String name, String gender, String bDate, String address, String tel, String referrer, String industry, String committee ) throws SQLException{
 
+		User user = chkUserByName( name );
+		User refer = null;
+		if( user != null )
+			return SQLConnection.USER_EXIST;
+
+		if( referrer != "" ){
+			refer = chkUserByName( referrer );
+			if( refer == null )
+				return SQLConnection.REFERRER_INEXIST;
+		}
+
+		Calendar birth = null;
+		try {
+			birth = createCalendarByString(bDate);
+		} catch (ParseException e) {
+			return SQLConnection.DATE_FORMAT_ERROR;
+		}
+
+		pst = con.prepareStatement( "insert into UserInfo " +
+				"( UserId, Name, Gender, Birth, Address, Tel, ReferrerId, CommitteeId, IndustryId, Feature ) " +
+				"values ( ?,?,?,?,?,?,?,?,?,? )" );
+		pst.setInt( 1,  uId );
+		pst.setString( 2, name );
+		pst.setString( 3, gender );
+		pst.setDate( 4, new java.sql.Date( birth.getTime().getTime() ) );
+		pst.setString( 5,  address );
+		pst.setString( 6, tel );
+		pst.setInt( 7, ( refer == null ? -1 : refer.getId() ) );
+		pst.setInt( 8, Integer.valueOf( committee ) );
+		pst.setInt( 9, Integer.valueOf( industry ) );
+		pst.setString(10, String.valueOf( '1' ) );
+		pst.executeUpdate();
+
+		pst = con.prepareStatement( "insert into EnrollRequest ( UserId, CommitteeId, IndustryId ) values ( ?,?,? )" );
+		pst.setInt( 1, uId );
+		pst.setInt( 2, Integer.valueOf(committee));
+		pst.setInt( 3, Integer.valueOf(industry) );
+		pst.executeUpdate();
+
+		return SQLConnection.SUCCESS;
+	}
 	//主函数（用不到）
 
 }
